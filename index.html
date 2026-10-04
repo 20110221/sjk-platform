@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>SJK全球特殊保护组织</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--g:#00ff88;--g2:#00cc66;--d:#1a3a1a;--bg:#0a0a0a;--bg2:#0d1a0d;--card:rgba(10,30,10,.85);--cb:rgba(0,255,136,.2);--t:#e0e0e0;--t2:rgba(255,255,255,.5)}
+body{font-family:-apple-system,sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--t);min-height:100vh}
+body::before,body::after{content:'';position:fixed;width:2px;height:150%;background:var(--g);opacity:.12;z-index:0;pointer-events:none}
+body::before{top:-20%;left:8%;transform:rotate(15deg)}
+body::after{bottom:-20%;right:8%;transform:rotate(-15deg)}
+.page{display:none;min-height:100vh;position:relative;z-index:1}
+.page.on{display:flex;flex-direction:column}
+.g{color:var(--g)}
+.glow{text-shadow:0 0 15px rgba(0,255,136,.5)}
+.ib{width:100%;background:rgba(20,60,20,.6);border:1px solid rgba(0,255,136,.4);border-radius:8px;padding:14px;color:var(--t);font-size:15px;margin-bottom:12px;outline:none}
+.ib:focus{border-color:var(--g);box-shadow:0 0 8px rgba(0,255,136,.2)}
+textarea.ib{min-height:80px;resize:vertical}
+.tb{background:linear-gradient(135deg,var(--g),var(--g2));color:#000;font-weight:700;border:none;border-radius:12px;padding:14px;font-size:16px;cursor:pointer;width:100%;box-shadow:0 0 20px rgba(0,255,136,.3)}
+.card{background:var(--card);border:1px solid var(--cb);border-radius:16px;padding:28px 24px;margin:12px}
+.lk{color:var(--g);cursor:pointer}
+/* 登录 */
+.ltop{display:flex;justify-content:space-between;padding:12px 20px}
+.gpt{font-size:11px;color:rgba(0,255,136,.6);letter-spacing:2px}
+.lc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px}
+.lb{width:60px;height:60px;background:var(--d);border:2px solid var(--g);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--g);margin-bottom:16px}
+.lt{font-size:28px;font-weight:900;color:var(--g);letter-spacing:4px;margin:12px 0 8px}
+/* 主界面 */
+.mtb{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(10,30,10,.95);border-bottom:2px solid rgba(0,255,136,.3);position:sticky;top:0;z-index:100}
+.tc{display:none;flex:1;padding:12px 16px 70px;overflow-y:auto}
+.tc.on{display:flex;flex-direction:column}
+.stabs{display:flex;border-bottom:1px solid var(--cb);overflow-x:auto}
+.st{padding:10px 16px;font-size:13px;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.st.on{color:var(--g);border-bottom-color:var(--g)}
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:200;display:flex;background:rgba(5,15,5,.98);border-top:2px solid rgba(0,255,136,.3);padding:6px 0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;color:var(--t2);font-size:11px;position:relative}
+.ni.on{color:var(--g)}
+.ni.on::after{content:'';position:absolute;top:-2px;left:20%;right:20%;height:2px;background:var(--g);border-radius:2px;box-shadow:0 0 6px var(--g)}
+.ni span:first-child{font-size:20px}
+/* 卡片 */
+.pc{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer;position:relative}
+.pch{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.pav{width:36px;height:36px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:14px}
+.pt{font-size:15px;font-weight:700;margin-bottom:6px}
+.ps{font-size:13px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pf{display:flex;gap:16px;margin-top:10px;font-size:12px;color:var(--t2)}
+.pf span{cursor:pointer}
+.pdel{position:absolute;top:10px;right:10px;background:none;border:none;color:#ff4444;font-size:16px;cursor:pointer}
+.tk{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:14px;margin-bottom:12px;cursor:pointer}
+.tn{font-size:16px;font-weight:700;margin-bottom:4px}
+.td{font-size:13px;color:var(--t2);margin-bottom:8px}
+.tr{font-size:22px;font-weight:900;color:var(--g);margin-bottom:8px;text-shadow:0 0 10px rgba(0,255,136,.3)}
+.tf{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--t2)}
+.ts{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.sa{background:rgba(0,255,136,.15);color:var(--g)}
+.so{background:rgba(255,152,0,.2);color:#ff9800}
+.sc{background:rgba(150,150,150,.2);color:#aaa}
+/* 聊天 */
+.chd{background:rgba(10,20,10,.9);border-bottom:1px solid var(--cb);padding:0 16px}
+.ab{background:#cc0000;border-radius:6px;padding:8px 12px;margin:6px 0;overflow:hidden}
+.as{color:#fff;font-size:12px;font-weight:600;white-space:nowrap;animation:scrollA 20s linear infinite}
+@keyframes scrollA{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.cbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 10px}
+.cname{font-size:15px;font-weight:700;color:var(--g);cursor:pointer}
+.cmem{font-size:12px;color:var(--t2)}
+.cmsg{flex:1;overflow-y:auto;padding:12px 0;display:flex;flex-direction:column;gap:12px}
+.cm{display:flex;gap:10px;animation:fiu .3s ease}
+.cm.self{flex-direction:row-reverse}
+@keyframes fiu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.cma{width:40px;height:40px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:16px;flex-shrink:0}
+.cmb{max-width:75%}
+.cmn{font-size:12px;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.lvb{background:var(--g);color:#000;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700}
+.ab2{color:var(--t2);font-size:11px}
+.cb{background:rgba(15,35,15,.8);border:1px solid rgba(0,255,136,.15);border-radius:8px;padding:10px 14px;font-size:14px;line-height:1.5}
+.cm.self .cb{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.4);color:var(--g)}
+.ct{font-size:10px;color:var(--t2);margin-top:3px}
+.cm.self .ct{text-align:right}
+.cib{display:flex;align-items:center;gap:8px;padding:10px 0}
+.cii{flex:1;background:rgba(20,60,20,.6);border:1px solid rgba(0,255,136,.3);border-radius:20px;padding:10px 16px;color:var(--t);font-size:14px;outline:none}
+.cii:focus{border-color:var(--g)}
+.csb{width:40px;height:40px;border-radius:50%;background:var(--g);border:none;font-size:18px;cursor:pointer}
+/* 弹窗 */
+.ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;display:none}
+.ov.on{display:block}
+.pp{position:fixed;z-index:400;display:none}
+.pp.on{display:flex;flex-direction:column}
+.ppc{top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,30,10,.98);border:1px solid var(--cb);border-radius:16px;padding:24px;width:90%;max-width:380px;max-height:80vh;overflow-y:auto}
+.ppb{bottom:0;left:0;right:0;background:rgba(10,30,10,.98);border-top:2px solid var(--g);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:85vh;overflow-y:auto}
+.ppr{top:0;right:0;bottom:0;width:85%;max-width:400px;background:rgba(10,20,10,.98);border-left:2px solid rgba(0,255,136,.3);padding:16px;overflow-y:auto}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.ph h3{color:var(--g);font-size:16px}
+.bcl{font-size:20px;color:var(--t2);cursor:pointer;padding:4px 8px}
+.bck{color:var(--g);cursor:pointer;font-size:14px}
+.mc{background:rgba(15,30,15,.6);border:1px solid var(--cb);border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer}
+.mc.un{border-left:3px solid var(--g);font-weight:600}
+.mch{display:flex;justify-content:space-between;margin-bottom:4px}
+.msn{font-size:14px;font-weight:600}
+.mtm{font-size:11px;color:var(--t2)}
+.mtt{font-size:13px;margin-bottom:2px}
+.mtb2{display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(0,255,136,.1);color:var(--g);margin-left:6px}
+.mp{display:none}
+.mp.on{display:flex;flex-direction:column}
+.mtg{background:rgba(0,255,136,.15);color:var(--g);padding:4px 10px;border-radius:12px;font-size:12px;display:inline-flex;align-items:center;gap:4px;margin:2px}
+.mtg .rmtg{cursor:pointer;color:#ff4444;font-weight:700}
+.prf{background:linear-gradient(135deg,var(--d),rgba(0,40,0,.8));border:2px solid var(--cb);border-radius:16px;padding:24px;margin:16px;text-align:center}
+.pra{width:80px;height:80px;border-radius:50%;border:3px solid var(--g);background:rgba(0,255,136,.15);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:var(--g);margin:0 auto 12px}
+.prn{font-size:20px;font-weight:700;margin-bottom:4px}
+.pri{font-size:12px;color:var(--t2);margin-top:8px;line-height:1.6}
+.mi{background:var(--card);border:1px solid var(--cb);border-radius:10px;padding:14px 16px;margin:0 16px 8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.mi span:last-child{color:var(--g);font-size:16px}
+.ua{border:2px dashed rgba(0,255,136,.3);border-radius:10px;padding:20px;text-align:center;color:var(--t2);cursor:pointer;margin-bottom:12px}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.pi{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--cb)}
+.pi img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.ri{position:absolute;top:2px;right:2px;background:#ff4444;color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer}
+.hid{display:none!important}
+.rbar{position:fixed;top:0;left:0;right:0;z-index:500;background:rgba(0,255,136,.9);color:#000;text-align:center;padding:8px;font-size:13px;font-weight:700;transform:translateY(-100%);transition:transform .3s}
+.rbar.show{transform:translateY(0)}
+.hint{font-size:12px;color:var(--t2)}
+.ai{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid var(--cb);font-size:13px}
+.eg{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;padding:12px}
+.eg span{font-size:24px;cursor:pointer;text-align:center;padding:4px;border-radius:6px}
+.eg span:hover{background:rgba(0,255,136,.15)}
+.ich{width:100%;background:rgba(20,60,20,.6);border:1px solid rgba(0,255,136,.4);border-radius:8px;padding:12px;color:var(--t);font-size:14px;margin-bottom:12px}
+.ir{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.fab{position:fixed;bottom:70px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--g);color:#000;font-size:28px;border:none;cursor:pointer;box-shadow:0 0 20px rgba(0,255,136,.4);z-index:100}
+.sub{padding:12px 16px;font-size:13px;color:var(--t2)}
+</style>
+</head>
+<body>
+<div id="rbar" class="rbar">✅ 数据已更新</div>
+
+<!-- 登录页 -->
+<div id="p-login" class="page on">
+<div class="ltop"><span class="gpt">S.J.K. GHOST PROTOCOL</span></div>
+<div class="lc">
+<div class="lb">S</div>
+<h2 class="lt glow">全 球 特 殊 保 护 组 织</h2>
+<p style="font-size:13px;color:rgba(255,255,255,.5);letter-spacing:3px">S.J.K. GHOST PROTOCOL</p>
+<div class="card">
+<input class="ib" id="lid" placeholder="工号" autocomplete="off">
+<div style="position:relative"><input class="ib" id="lpd" type="password" placeholder="密码">
+<span style="position:absolute;right:14px;top:14px;cursor:pointer" onclick="var i=document.getElementById('lpd');i.type=i.type==='password'?'text':'password'">👁</span></div>
+<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:16px;cursor:pointer"><input type="checkbox" id="rmm"> 记住登录</label>
+<button class="tb" onclick="doLogin()">进 入 组 织</button>
+<p style="margin-top:16px;text-align:center;font-size:13px;color:rgba(255,255,255,.5)">还没有账号？<span class="lk" onclick="sp('p-reg')">申请注册</span></p>
+</div>
+</div>
+</div>
+
+<!-- 注册页 -->
+<div id="p-reg" class="page">
+<div class="ltop"><span class="gpt">S.J.K. GHOST PROTOCOL</span></div>
+<div class="lc">
+<p style="font-size:36px;margin-bottom:12px">🛡</p>
+<h2 class="lt glow" style="font-size:20px">全 球 特 殊 保 护 组 织 · 新 员 注 册</h2>
+<p style="font-size:13px;color:rgba(255,255,255,.5);letter-spacing:3px">NEW OPERATIVE REGISTRATION</p>
+<div class="card">
+<p style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:16px">请填写真实信息</p>
+<input class="ib" id="rnm" placeholder="用户名（3-20位）">
+<input class="ib" id="rdn" placeholder="显示名（至少2个字）">
+<input class="ib" id="rpd" type="password" placeholder="密码（8位以上含字母数字）">
+<input class="ib" id="rp2" type="password" placeholder="确认密码">
+<select class="ich" id="rar"><option value="">所属区域（选填）</option><option>总部</option><option>华东</option><option>华南</option><option>华北</option><option>华中</option><option>西南</option><option>西北</option><option>东北</option></select>
+<button class="tb" onclick="doReg()">[ 提 交 注 册 ]</button>
+<p style="margin-top:16px;text-align:center;font-size:13px;color:rgba(255,255,255,.5)">已有账号？<span class="lk" onclick="sp('p-login')">返回登录</span></p>
+</div>
+</div>
+</div>
+
+<!-- 主界面 -->
+<div id="p-main" class="page">
+<div class="mtb"><div style="display:flex;align-items:center;gap:8px">🛡 <span class="g" style="font-weight:700;letter-spacing:2px">S.J.K.</span></div>
+<span style="font-size:22px;cursor:pointer;position:relative" onclick="openPopup('pp-msg')">📧<span id="ubdg" class="hid" style="position:absolute;top:-6px;right:-8px;background:#ff3333;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center"></span></span></div>
+
+<div id="t-forum" class="tc on">
+<div class="stabs"><span class="st on" onclick="sStab(this,'fa')">全部帖子</span><span class="st" onclick="sStab(this,'fm')">我的帖子</span></div>
+<div id="p-list" style="flex:1;padding:12px 0;overflow-y:auto"></div>
+<button class="fab" onclick="openPopup('pp-post')">＋</button>
+</div>
+
+<div id="t-comm" class="tc">
+<div class="chd">
+<div class="sub">... &gt; 内网聊天室</div>
+<div class="ab"><div class="as">⚠ 警报：亚洲区第三号鬼域持续扩大，S-001鬼邮局核心区空间崩坏加速。</div></div>
+<div class="cbar"><span class="cname" id="chname" onclick="openPopup('pp-ch')">总部频道 ▾</span><span class="cmem" id="onc">🟢 0人在线</span></div>
+</div>
+<div id="cmsg" class="cmsg"></div>
+<div class="cib">
+<span style="font-size:22px;cursor:pointer" onclick="openPopup('pp-emo')">😊</span>
+<input class="cii" id="cinp" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendC()">
+<button class="csb" onclick="sendC()">✈</button>
+</div>
+</div>
+
+<div id="t-task" class="tc">
+<div class="stabs"><span class="st on" onclick="sStab(this,'ta')">可接取</span><span class="st" onclick="sStab(this,'tm')">我发布的</span><span class="st" onclick="sStab(this,'tac')">我接取的</span></div>
+<div id="tk-list" style="flex:1;padding:12px 0;overflow-y:auto"></div>
+<button class="fab" onclick="openPopup('pp-tpub')">＋</button>
+</div>
+
+<div id="t-mine" class="tc">
+<div id="prf-box" style="padding:12px 0"></div>
+<div id="menu-box"></div>
+</div>
+
+<div class="bnav">
+<div class="ni on" onclick="sTab('forum',this)"><span>💬</span><span>论坛</span></div>
+<div class="ni" onclick="sTab('comm',this)"><span>🎮</span><span>社区</span></div>
+<div class="ni" onclick="sTab('task',this)"><span>📋</span><span>任务</span></div>
+<div class="ni" onclick="sTab('mine',this)"><span>👤</span><span>我的</span></div>
+</div>
+</div>
+
+<!-- 弹窗 -->
+<div id="ov" class="ov" onclick="cAll()"></div>
+<!-- 消息中心 -->
+<div id="pp-msg" class="pp ppr">
+<div class="ph"><h3>消息中心</h3><span class="bcl" onclick="cAll()">✕</span></div>
+<div class="stabs"><span class="st on" onclick="sMTab(this,'mi')">收件箱</span><span class="st" onclick="sMTab(this,'mo')">发件箱</span><span class="st" onclick="sMTab(this,'mc')">新建消息</span></div>
+<div id="mi" class="mp on"></div><div id="mo" class="mp"></div>
+<div id="mc" class="mp">
+<div class="ir"><input class="ib" id="mto" placeholder="收件人工号" style="flex:1;margin:0"><button class="tb" style="width:auto;padding:10px 16px;font-size:13px" onclick="vrfy()">验证</button></div>
+<p id="mvrf" class="hint"></p><div id="mtags" style="margin:8px 0"></div>
+<div class="stabs" style="margin-top:8px"><span class="st on" onclick="sMType(this,'text')">💬</span><span class="st" onclick="sMType(this,'image')">🖼</span><span class="st" onclick="sMType(this,'file')">📎</span></div>
+<div id="mt-text" class="mp on"><input class="ib" id="mtit" placeholder="标题"><textarea class="ib" id="mcon" placeholder="消息内容..." style="min-height:80px"></textarea></div>
+<div id="mt-image" class="mp"><div class="ua" onclick="document.getElementById('mimg').click()"><p>📷 上传图片</p><input type="file" id="mimg" multiple accept="image/*" style="display:none"></div></div>
+<div id="mt-file" class="mp"><div class="ua" onclick="document.getElementById('mfil').click()"><p>📎 选择文件</p><input type="file" id="mfil" style="display:none"></div></div>
+<div class="ir" style="margin-top:12px"><label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2);cursor:pointer"><input type="checkbox" id="murg"> 紧急</label><button class="tb" style="width:auto;padding:10px 24px" onclick="sendMsg()">发 送</button></div>
+</div>
+</div>
+<!-- 频道 -->
+<div id="pp-ch" class="pp ppc" style="max-height:70vh;overflow-y:auto">
+<div class="ph"><h3>频道列表</h3><span class="bcl" onclick="cAll()">✕</span></div>
+<div id="chlist"></div>
+</div>
+<!-- Emoji -->
+<div id="pp-emo" class="pp ppb" style="height:auto;max-height:200px"><div class="eg" id="egr"></div></div>
+<!-- 账号管理 -->
+<div id="pp-acc" class="pp ppc" style="max-height:80vh;overflow-y:auto">
+<div class="ph"><h3>账号管理</h3><span class="bcl" onclick="cAll()">✕</span></div>
+<div id="alst"></div>
+<div style="margin-top:16px;border-top:1px solid var(--cb);padding-top:16px">
+<input class="ib" id="aeid" placeholder="工号"><input class="ib" id="anm" placeholder="显示名">
+<input class="ib" id="apd" type="password" placeholder="密码"><button class="tb" onclick="admAdd()">添加账号</button>
+</div>
+</div>
+<!-- 发帖 -->
+<div id="pp-post" class="pp ppb">
+<div class="ph"><h3>发布新帖子</h3><span class="bcl" onclick="cAll()">✕</span></div>
+<input class="ib" id="ptit" placeholder="帖子标题"><textarea class="ib" id="pcon" placeholder="分享你的想法..."></textarea>
+<button class="tb" onclick="submitPost()">发 布</button>
+</div>
+<!-- 发任务 -->
+<div id="pp-tpub" class="pp ppb">
+<div class="ph"><h3>发布新任务</h3><span class="bcl" onclick="cAll()">✕</span></div>
+<input class="ib" id="tnam" placeholder="任务名称"><textarea class="ib" id="tdes" placeholder="任务描述..."></textarea>
+<div class="ir"><span style="font-size:20px">💰</span><input class="ib" id="trew" type="number" placeholder="悬赏金额" style="flex:1;margin:0"></div>
+<input class="ib" id="tdln" type="date">
+<button class="tb" onclick="submitTask()">发 布 任 务</button>
+</div>
+<!-- 详情 -->
+<div id="pp-pd" class="pp ppb"><div class="ph"><span class="bck" onclick="cAll()">← 返回</span><h3 id="pdt"></h3></div><div id="pdb"></div></div>
+<div id="pp-td" class="pp ppb"><div class="ph"><span class="bck" onclick="cAll()">← 返回</span><h3 id="tdt"></h3></div><div id="tdb"></div></div>
+<!-- 确认/提示 -->
+<div id="pp-cfm" class="pp ppc"><p id="cfmt" style="margin-bottom:16px"></p><div class="ir" style="justify-content:center"><button class="tb" style="width:auto;background:rgba(0,255,136,.1);color:var(--g);box-shadow:none" onclick="cAll()">取消</button><button class="tb" style="width:auto" id="cfmb">确认</button></div></div>
+<div id="pp-alt" class="pp ppc"><p id="altt" style="margin-bottom:16px"></p><button class="tb" onclick="cAll()">确定</button></div>
+
+<!-- ====== 核心逻辑 ====== -->
+<script>
+// ==================== 【配置区】替换为你的 Firebase 信息 ====================
+// 第1步：去 https://console.firebase.google.com 创建项目
+// 第2步：项目设置 → 添加 Web 应用 → 复制配置到这里
+// 第3步：开启 Anonymous 认证 + Realtime Database（规则读写都设 true）
+const firebaseConfig = {
+  apiKey: "AIzaSyBXxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  authDomain: "sjk-platform-xxxxx.firebaseapp.com",
+  databaseURL: "https://sjk-platform-xxxxx-default-rtdb.firebaseio.com",
+  projectId: "sjk-platform-xxxxx",
+  storageBucket: "sjk-platform-xxxxx.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+// ==================== 配置区结束 ====================
+
+// 动态加载 Firebase SDK
+function loadScript(src){return new Promise((r,e)=>{var s=document.createElement('script');s.src=src;s.onload=r;s.onerror=e;document.head.appendChild(s);})}
+async function initFirebase(){
+  await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+  await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+  await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js');
+  firebase.initializeApp(firebaseConfig);
+  window.fbAuth=firebase.auth();
+  window.fbDB=firebase.database();
+}
+// ==================== 全局变量 ====================
+let myId=null,myName='',myRole='user',ch='总部频道';
+let msgRcp=[],cp=null;
+// ==================== 工具函数 ====================
+function sp(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById(id).classList.add('on');}
+function openPopup(n){if(cp===n){cAll();return;}cAll();document.getElementById('ov').classList.add('on');document.getElementById(n).classList.add('on');cp=n;}
+function cAll(){document.querySelectorAll('.pp').forEach(p=>p.classList.remove('on'));document.getElementById('ov').classList.remove('on');cp=null;}
+function alrt(m){document.getElementById('altt').textContent=m;openPopup('pp-alt');}
+function cfmm(m,f){document.getElementById('cfmt').textContent=m;document.getElementById('cfmb').onclick=()=>{cAll();f();};openPopup('pp-cfm');}
+function now(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function nowFull(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1).toString().padStart(2,'0')+'-'+d.getDate().toString().padStart(2,'0')+' '+now();}
+function gc(n){var c={管理员:'#8b0000',张三:'#0066cc',李四:'#009999',王五:'#6633cc'};return c[n]||'#336633';}
+function sTab(t,el){document.querySelectorAll('.tc').forEach(p=>p.classList.remove('on'));document.getElementById('t-'+t).classList.add('on');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));el.classList.add('on');}
+function sStab(el,f){el.parentElement.querySelectorAll('.st').forEach(s=>s.classList.remove('on'));el.classList.add('on');if(f==='fa'||f==='fm')loadPosts(f);if(f==='ta'||f==='tm'||f==='tac')loadTasks(f);}
+function sMTab(el,t){el.parentElement.querySelectorAll('.st').forEach(s=>s.classList.remove('on'));el.classList.add('on');document.querySelectorAll('#pp-msg .mp').forEach(p=>p.classList.remove('on'));document.getElementById(t).classList.add('on');if(t==='mi')loadInbox();if(t==='mo')loadOutbox();}
+function sMType(el,t){el.parentElement.querySelectorAll('.st').forEach(s=>s.classList.remove('on'));el.classList.add('on');['text','image','file'].forEach(x=>document.getElementById('mt-'+x).classList.remove('on'));document.getElementById('mt-'+t).classList.add('on');}
+
+// ==================== 登录 ====================
+async function doLogin(){
+  var id=document.getElementById('lid').value.trim(),pd=document.getElementById('lpd').value.trim();
+  if(!id||!pd)return alrt('请输入工号和密码');
+  try{
+    await fbAuth.signInAnonymously();
+    var snap=await fbDB.ref('accounts/'+id).once('value');
+    var u=snap.val();
+    if(!u||u.password!==pd)return alrt('工号或密码错误');
+    myId=id;myName=u.display_name;myRole=u.role||'user';
+    if(document.getElementById('rmm').checked)localStorage.setItem('sjk_id',id);
+    enterMain();
+  }catch(e){alrt('登录失败: '+e.message);}
+}
+
+// ==================== 注册 ====================
+async function doReg(){
+  var nm=document.getElementById('rnm').value.trim(),dn=document.getElementById('rdn').value.trim();
+  var pd=document.getElementById('rpd').value.trim(),pd2=document.getElementById('rp2').value.trim();
+  var ar=document.getElementById('rar').value;
+  if(!nm||!dn||!pd||!pd2)return alrt('请填写完整');
+  if(nm.length<3)return alrt('用户名至少3位');
+  if(pd.length<6)return alrt('密码至少6位');
+  if(pd!==pd2)return alrt('两次密码不一致');
+  try{
+    await fbAuth.signInAnonymously();
+    var s=await fbDB.ref('accounts/'+nm).once('value');
+    if(s.val())return alrt('用户名已存在');
+    var lastId=0;
+    var allAcc=await fbDB.ref('accounts').once('value');
+    allAcc.forEach(c=>{var v=c.val();if(v.employee_id&&parseInt(v.employee_id)>lastId)lastId=parseInt(v.employee_id);});
+    var emp=String(lastId+1).padStart(5,'0');
+    await fbDB.ref('accounts/'+nm).set({employee_id:emp,display_name:dn,password:pd,role:'user',area:ar||'未设置',level:1});
+    alrt('注册成功！你的工号是 '+emp+'，请记住');
+    document.getElementById('lid').value=emp;
+    sp('p-login');
+  }catch(e){alrt('注册失败: '+e.message);}
+}
+
+// ==================== 主界面 ====================
+function enterMain(){
+  sp('p-main');loadPosts();loadTasks();updateProfile();loadChat();initEmoji();
+  document.getElementById('chname').textContent=ch+' ▾';
+}
+function updateProfile(){
+  document.getElementById('prf-box').innerHTML='<div class="prf"><div class="pra">'+myName[0]+'</div><div class="prn">'+myName+'</div><div class="g" style="font-size:13px">工号：'+myId+'</div><div class="pri">区域：'+(myRole==='admin'?'总部':'成员')+' | 等级：LV.1 | 部门：技术研发部 | '+(myRole==='admin'?'管理员':'成员')+'</div></div>';
+  var m='';
+  if(myRole==='admin')m+='<div class="mi" onclick="openPopup(\'pp-acc\');loadAcc()"><span>⚙️ 账号管理</span><span>›</span></div>';
+  m+='<div class="mi" onclick="alrt(\'版本 1.0.0 | SJK全球特殊保护组织\')"><span>ℹ️ 关于平台</span><span>›</span></div>';
+  m+='<div class="mi" onclick="cfmm(\'确认退出？\',function(){fbAuth.signOut();localStorage.removeItem(\'sjk_id\');sp(\'p-login\')})"><span>🚪 退出登录</span><span>›</span></div>';
+  document.getElementById('menu-box').innerHTML=m;
+}
+
+// ==================== 论坛 ====================
+function loadPosts(f){
+  fbDB.ref('posts').orderByChild('created_at').once('value',function(s){
+    var posts=[];
+    s.forEach(function(c){var p=c.val();p._key=c.key;if(!f||f==='fa'||p.author===myId)posts.push(p);});
+    posts.reverse();
+    document.getElementById('p-list').innerHTML=posts.map(function(p){
+      return '<div class="pc" onclick="showPD(\''+p._key+'\')">'+(myRole==='admin'?'<button class="pdel" onclick="event.stopPropagation();delP(\''+p._key+'\')">🗑</button>':'')+'<div class="pch"><div class="pav" style="background:'+gc(p.author_name||'')+'">'+(p.author_name||'?')[0]+'</div><div><div style="font-size:13px;font-weight:600">'+p.author_name+'</div><div style="font-size:11px;color:var(--t2)">'+(p.created_at||'')+'</div></div></div><div class="pt">'+p.title+'</div><div class="ps">'+p.content+'</div><div class="pf"><span onclick="event.stopPropagation();togL(\''+p._key+'\','+(p.likes||0)+')">❤ '+(p.likes||0)+'</span><span>💬 '+(p.comment_count||0)+'</span></div></div>';
+    }).join('');
+  });
+}
+function togL(k,n){fbDB.ref('posts/'+k+'/liked/'+myId).once('value',function(s){if(s.val()){fbDB.ref('posts/'+k+'/liked/'+myId).remove();fbDB.ref('posts/'+k+'/likes').set(Math.max(0,n-1));}else{fbDB.ref('posts/'+k+'/liked/'+myId).set(true);fbDB.ref('posts/'+k+'/likes').set(n+1);}loadPosts();});}
+function delP(k){cfmm('确认删除此帖子？',function(){fbDB.ref('posts/'+k).remove();loadPosts();});}
+function showPD(k){
+  fbDB.ref('posts/'+k).once('value',function(s){
+    var p=s.val();document.getElementById('pdt').textContent=p.title;
+    var cmts=p.comments?Object.values(p.comments):[];
+    document.getElementById('pdb').innerHTML='<div style="font-size:13px;color:var(--t2);margin-bottom:12px">'+p.author_name+' · '+(p.created_at||'')+'</div><p style="line-height:1.6;margin-bottom:16px">'+p.content+'</p><div style="border-top:1px solid var(--cb);padding-top:12px"><h4 class="g" style="margin-bottom:10px">评论 ('+cmts.length+')</h4>'+cmts.map(function(c){return '<div style="padding:8px 0;border-bottom:1px solid var(--cb);font-size:13px"><b>'+c.author_name+'</b> <span style="color:var(--t2);font-size:11px">'+c.time+'</span><p style="margin-top:4px">'+c.content+'</p></div>';}).join('')+'</div><div class="ir"><input class="ib" id="cmti" placeholder="写评论..." style="flex:1;margin:0"><button class="tb" style="width:auto;padding:8px 16px;font-size:13px" onclick="addCmt(\''+k+'\')">发送</button></div>';
+    openPopup('pp-pd');
+  });
+}
+function addCmt(k){
+  var v=document.getElementById('cmti').value.trim();if(!v)return;
+  var cmt={author:myId,author_name:myName,content:v,time:now()};
+  fbDB.ref('posts/'+k+'/comments').push(cmt);
+  fbDB.ref('posts/'+k+'/comment_count').once('value',function(s){fbDB.ref('posts/'+k+'/comment_count').set((s.val()||0)+1);});
+  showPD(k);loadPosts();
+}
+function submitPost(){
+  var t=document.getElementById('ptit').value.trim(),c=document.getElementById('pcon').value.trim();
+  if(!t||!c)return alrt('请填写标题和内容');
+  fbDB.ref('posts').push({author:myId,author_name:myName,category:'其他',title:t,content:c,likes:0,comment_count:0,created_at:nowFull()});
+  cAll();loadPosts();alrt('发布成功');
+  document.getElementById('ptit').value='';document.getElementById('pcon').value='';
+}
+
+// ==================== 任务 ====================
+function loadTasks(f){
+  fbDB.ref('tasks').once('value',function(s){
+    var tasks=[];
+    s.forEach(function(c){var t=c.val();t._key=c.key;tasks.push(t);});
+    tasks.reverse();
+    var fl=tasks;
+    if(f==='tm')fl=tasks.filter(function(t){return t.author===myId;});
+    if(f==='tac')fl=tasks.filter(function(t){return t.accepted_by===myId;});
+    if(!f||f==='ta')fl=tasks.filter(function(t){return t.status==='available';});
+    document.getElementById('tk-list').innerHTML=fl.map(function(t){
+      return '<div class="tk" onclick="showTD(\''+t._key+'\')">'+(myRole==='admin'?'<button class="pdel" onclick="event.stopPropagation();delT(\''+t._key+'\')">🗑</button>':'')+'<div class="tn">'+t.name+'</div><div class="td">'+t.description+'</div><div class="tr">💰 '+t.reward+' 元</div><div class="tf"><span>发布人：'+t.author_name+' | 截止：'+t.deadline+'</span><span class="ts '+(t.status==='available'?'sa':t.status==='accepted'?'so':'sc')+'">'+(t.status==='available'?'进行中':t.status==='accepted'?'已接取':'已完成')+'</span></div></div>';
+    }).join('');
+  });
+}
+function delT(k){cfmm('确认删除此任务？',function(){fbDB.ref('tasks/'+k).remove();loadTasks();});}
+function showTD(k){
+  fbDB.ref('tasks/'+k).once('value',function(s){
+    var t=s.val();document.getElementById('tdt').textContent=t.name;
+    var can=t.status==='available'&&t.author!==myId;
+    document.getElementById('tdb').innerHTML='<div style="line-height:1.6;margin-bottom:12px">'+t.description+'</div><div class="tr">💰 '+t.reward+' 元</div><div style="font-size:13px;color:var(--t2);margin:12px 0">发布人：'+t.author_name+' | 截止：'+t.deadline+' | <span class="ts '+(t.status==='available'?'sa':t.status==='accepted'?'so':'sc')+'">'+(t.status==='available'?'进行中':t.status==='accepted'?'已接取':'已完成')+'</span></div>'+(can?'<button class="tb" style="margin-top:16px" onclick="accT(\''+k+'\')">接取任务</button>':'');
+    openPopup('pp-td');
+  });
+}
+function accT(k){cfmm('确认接取？',function(){fbDB.ref('tasks/'+k+'/status').set('accepted');fbDB.ref('tasks/'+k+'/accepted_by').set(myId);cAll();loadTasks();alrt('接取成功');});}
+function submitTask(){
+  var n=document.getElementById('tnam').value.trim(),d=document.getElementById('tdes').value.trim();
+  var r=parseFloat(document.getElementById('trew').value)||0,dl=document.getElementById('tdln').value;
+  if(!n)return alrt('请输入任务名称');
+  fbDB.ref('tasks').push({author:myId,author_name:myName,name:n,description:d,reward:r,deadline:dl,status:'available',created_at:nowFull()});
+  cAll();loadTasks();alrt('任务发布成功');
+  document.getElementById('tnam').value='';document.getElementById('tdes').value='';document.getElementById('trew').value='';document.getElementById('tdln').value='';
+}
+
+// ==================== 消息 ====================
+function loadInbox(){
+  fbDB.ref('messages').orderByChild('to').equalTo(myId).once('value',function(s){
+    var msgs=[];
+    s.forEach(function(c){var m=c.val();m._key=c.key;msgs.push(m);});
+    msgs.sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');});
+    document.getElementById('mi').innerHTML=msgs.map(function(m){
+      return '<div class="mc '+(m.read?'':'un')+'" onclick="readM(\''+m._key+'\')"><div class="mch"><span class="msn">'+(m.from_name||'系统')+'</span><span class="mtm">'+m.created_at+'</span></div><div class="mtt">'+m.title+(m.urgent?' <span style="color:#ff4444;font-size:11px">[紧急]</span>':'')+'</div><div style="font-size:12px;color:var(--t2)">'+(m.content||'')+'</div></div>';
+    }).join('')||'<p style="text-align:center;color:var(--t2);padding:40px">暂无消息</p>';
+  });
+}
+function loadOutbox(){
+  fbDB.ref('messages').orderByChild('from').equalTo(myId).once('value',function(s){
+    var msgs=[];
+    s.forEach(function(c){var m=c.val();m._key=c.key;msgs.push(m);});
+    msgs.sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'');});
+    document.getElementById('mo').innerHTML=msgs.map(function(m){
+      return '<div class="mc"><div class="mch"><span class="msn">致 '+(m.to||'')+'</span><span class="mtm">'+m.created_at+'</span></div><div class="mtt">'+m.title+'</div><div style="font-size:12px;color:var(--t2)">'+(m.content||'')+'</div></div>';
+    }).join('')||'<p style="text-align:center;color:var(--t2);padding:40px">暂无已发消息</p>';
+  });
+}
+function readM(k){fbDB.ref('messages/'+k+'/read').set(true);loadInbox();updBadge();}
+function updBadge(){
+  fbDB.ref('messages').orderByChild('to').equalTo(myId).once('value',function(s){
+    var c=0;s.forEach(function(m){if(!m.val().read)c++;});
+    var b=document.getElementById('ubdg');if(c>0){b.textContent=c;b.classList.remove('hid');}else b.classList.add('hid');
+  });
+}
+function vrfy(){
+  var id=document.getElementById('mto').value.trim();if(!id)return;
+  if(id==='all'||id==='全体'){document.getElementById('mvrf').innerHTML='<span style="color:var(--g)">📢 广播模式：所有成员</span>';msgRcp=['all'];renderTags();return;}
+  fbDB.ref('accounts/'+id).once('value',function(s){
+    var u=s.val();
+    if(u){document.getElementById('mvrf').innerHTML='<span style="color:var(--g)">✅ '+u.display_name+'（'+u.employee_id+'）</span>';if(!msgRcp.includes(id))msgRcp.push(id);renderTags();}
+    else document.getElementById('mvrf').innerHTML='<span style="color:#ff4444">❌ 未找到该工号</span>';
+  });
+}
+function renderTags(){document.getElementById('mtags').innerHTML=msgRcp.map(function(r){return '<span class="mtg">'+r+' <span class="rmtg" onclick="msgRcp=msgRcp.filter(function(x){return x!==\''+r+'\'});renderTags()">×</span></span>';}).join('');}
+function sendMsg(){
+  if(!msgRcp.length)return alrt('请添加收件人');
+  var t=document.getElementById('mtit').value.trim(),c=document.getElementById('mcon').value.trim();
+  var u=document.getElementById('murg').checked;
+  if(!t)return alrt('请输入标题');
+  var targets=msgRcp.includes('all')?['all']:msgRcp;
+  targets.forEach(function(to){
+    var data={from:myId,from_name:myName,to:to,title:t,content:c,type:'text',urgent:u,read:false,created_at:nowFull()};
+    if(to!=='all'){fbDB.ref('messages').push(data);}
+    else{fbDB.ref('accounts').once('value',function(ss){ss.forEach(function(a){var u2=a.val();if(u2.employee_id!==myId){fbDB.ref('messages').push(Object.assign({},data));}});});}
+  });
+  alrt('消息已发送');msgRcp=[];document.getElementById('mto').value='';document.getElementById('mtags').innerHTML='';document.getElementById('mvrf').innerHTML='';
+}
+
+// ==================== 社区聊天 ====================
+var channels=['总部频道','亚洲区频道','华北区频道','华南区频道','任务讨论频道','装备交流频道'];
+function loadChat(){
+  var ref=fbDB.ref('chat/'+encodeURIComponent(ch));
+  ref.orderByChild('ts').limitToLast(50).once('value',function(s){
+    var msgs=[];s.forEach(function(c){msgs.push(c.val());});
+    document.getElementById('cmsg').innerHTML=msgs.map(function(m){
+      var isSelf=m.uid===myId;
+      return '<div class="cm '+(isSelf?'self':'')+'"><div class="cma" style="background:'+gc(m.uname||'')+'">'+(m.uname||'?')[0]+'</div><div class="cmb"><div class="cmn"><span class="g">'+m.uname+'</span><span class="lvb">LV.'+(m.ulevel||1)+'</span><span class="ab2">['+(m.uarea||'总部')+']</span></div><div class="cb">'+m.content+'</div><div class="ct">'+m.time+'</div></div></div>';
+    }).join('');
+    var box=document.getElementById('cmsg');box.scrollTop=box.scrollHeight;
+  });
+  // 实时监听
+  ref.orderByChild('ts').limitToLast(1).on('child_added',function(snap){
+    var m=snap.val();
+    var el=document.createElement('div');
+    el.innerHTML='<div class="cm '+(m.uid===myId?'self':'')+'"><div class="cma" style="background:'+gc(m.uname||'')+'">'+(m.uname||'?')[0]+'</div><div class="cmb"><div class="cmn"><span class="g">'+m.uname+'</span><span class="lvb">LV.'+(m.ulevel||1)+'</span><span class="ab2">['+(m.uarea||'总部')+']</span></div><div class="cb">'+m.content+'</div><div class="ct">'+m.time+'</div></div></div>';
+    document.getElementById('cmsg').appendChild(el);
+    document.getElementById('cmsg').scrollTop=document.getElementById('cmsg').scrollHeight;
+  });
+}
+function sendC(){
+  var v=document.getElementById('cinp').value.trim();if(!v)return;
+  fbDB.ref('chat/'+encodeURIComponent(ch)).push({uid:myId,uname:myName,ulevel:1,uarea:'总部',content:v,time:now(),ts:Date.now()});
+  document.getElementById('cinp').value='';
+}
+function switchCh(c){ch=c;document.getElementById('chname').textContent=c+' ▾';cAll();fbDB.ref('chat/'+encodeURIComponent(ch)).off();loadChat();}
+function initEmoji(){var e=['😊','😂','👍','❤️','🔥','💪','✅','🎉','😎','🤔','😅','🙏','👋','🚀','⚡','🛡','⚔','📌','💀','👁'];document.getElementById('egr').innerHTML=e.map(function(x){return '<span onclick="document.getElementById(\'cinp\').value+=\''+x+'\';cAll()">'+x+'</span>';}).join('');}
+
+// ==================== 账号管理 ====================
+function loadAcc(){
+  fbDB.ref('accounts').once('value',function(s){
+    var accs=[];s.forEach(function(c){var a=c.val();a._k=c.key;accs.push(a);});
+    document.getElementById('alst').innerHTML=accs.map(function(a){
+      return '<div class="ai"><span><b>'+a._k+'</b> '+a.display_name+' <span style="color:var(--t2);font-size:11px">['+(a.role||'user')+']</span></span><span>'+(a._k!=='00000'?'<button class="tb" style="width:auto;padding:6px 12px;font-size:12px" onclick="admDel(\''+a._k+'\')">删除</button>':'')+'</span></div>';
+    }).join('');
+  });
+}
+function admAdd(){
+  var eid=document.getElementById('aeid').value.trim(),nm=document.getElementById('anm').value.trim(),pd=document.getElementById('apd').value.trim();
+  if(!eid||!nm||!pd)return alrt('请填写完整');
+  fbDB.ref('accounts/'+eid).once('value',function(s){if(s.val())return alrt('工号已存在');fbDB.ref('accounts/'+eid).set({employee_id:eid,display_name:nm,password:pd,role:'user',area:'未设置',level:1}).then(function(){loadAcc();alrt('添加成功');});});
+}
+function admDel(k){cfmm('确认删除 '+k+'？',function(){fbDB.ref('accounts/'+k).remove();loadAcc();});}
+
+// ==================== 启动 ====================
+(async function(){
+  try{
+    await initFirebase();
+    var saved=localStorage.getItem('sjk_id');
+    if(saved){
+      try{
+        await fbAuth.signInAnonymously();
+        var s=await fbDB.ref('accounts/'+saved).once('value');
+        var u=s.val();
+        if(u){myId=saved;myName=u.display_name;myRole=u.role||'user';enterMain();}
+      }catch(e){console.log('自动登录失败',e);}
+    }
+  }catch(e){
+    // Firebase 加载失败时的降级提示
+    document.body.innerHTML='<div style="padding:40px;text-align:center;color:#ff4444"><h2>⚠️ 连接失败</h2><p style="margin-top:12px;color:var(--t2)">请检查网络连接，或联系管理员确认 Firebase 配置。</p></div>';
+  }
+})();
+</script>
+</body>
+</html>
